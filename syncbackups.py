@@ -11,8 +11,8 @@ def buildbuf(opts):
     buf.append("--human-readable")
     buf.append("--chmod=Dg=rwxs,Fgu=rw,Fo=r")
     buf.append("--group")
-    buf.append("--update --backup --recursive")
-    buf.append("--human-readable --rsh=ssh --delete-after --links")
+    buf.append("--update --backup")
+    buf.append("--rsh=ssh --delete-after --links")
     buf.append("--exclude '.~lock*' --exclude '*~' --exclude '443'")
 
     if opts.verbose is True:
@@ -49,7 +49,10 @@ def main():
     # sync from cyclops to thumbdrive if mounted as "jam"
     # sync ~jam/projects/ to /srv/backups on cyclops as "jam"
     buf = buildbuf(opts)
-    if opts.mode == "thumbdrive":
+    if opts.mode is None:
+        print "specify --mode!"
+        return -1
+    elif opts.mode == "thumbdrive":
         if os.path.isdir(opts.thumbdrive) and os.access(opts.thumbdrive, os.W_OK):
              buf.append("/srv/backups/ %s" % (opts.thumbdrive))
         else:
@@ -61,6 +64,8 @@ def main():
         buf.append("backups@falcon:/srv/backups/falcon /srv/backups/")
     elif opts.mode == "cyclops":
         buf.append("/srv/backups/cyclops backups@falcon:/srv/backups/")
+    elif opts.mode == "vhosts":
+        buf.append("backups@falcon:/srv/www/vhosts /srv/backups/falcon/")
     res = run(buf)
     return res
 
