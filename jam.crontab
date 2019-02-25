@@ -1,0 +1,5 @@
+MAILTO=jam@zoidtechnologies.com
+00 04 * * * /usr/local/bin/syncbackups.py --mode=projects
+15 04 * * * /usr/local/bin/syncbackups.py --mode=vhosts
+30 04 * * * /usr/local/bin/syncbackups.py --mode=thumbdrive
+
