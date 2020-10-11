@@ -2,33 +2,36 @@
 
 import os, sys
 from optparse import OptionParser
-import bbsengine4 as bbsengine
+import ttyio3 as ttyio
 
-def buildbuf(opts):
-    buf = []
-    buf.append("rsync")
-    buf.append("--recursive")
-    buf.append("--human-readable")
-    buf.append("--chmod=Dg=rwxs,Fgu=rw,Fo=r")
-    buf.append("--group")
-    buf.append("--update --backup")
-    buf.append("--rsh=ssh --delete-after --links")
-    buf.append("--exclude '.~lock*' --exclude '*~' --exclude '443'")
+def buildcmd(opts, args):
+    cmd = []
+    cmd.append("rsync")
+    cmd.append("--recursive")
+    cmd.append("--human-readable")
+    cmd.append("--chmod=Dg=rwxs,Fgu=rw,Fo=r")
+    cmd.append("--group")
+    cmd.append("--update --backup")
+    cmd.append("--rsh=ssh --delete-after --links")
+    cmd.append("--exclude '.~lock*' --exclude '*~' --exclude '443'")
 
     if opts.verbose is True:
-        buf.append("--verbose")
+        cmd.append("--verbose")
     if opts.dryrun is True:
-        buf.append("--dry-run")
+        cmd.append("--dry-run")
     if sys.stdout.isatty() is True:
-        buf.append("--progress")
-    return buf
+        cmd.append("--progress")
+    return "%s %s" % (" ".join(cmd), args)
 
 THUMBDRIVE = "/run/media/jam/6F6A-A171"
 
-def run(buf):
-    b = " ".join(buf)
-    print b
-    res = os.system(b)
+def run(opts, cmd):
+    if opts.dryrun is True:
+        ttyio.echo("** dry run ** "+cmd)
+        res = True
+    else:
+        ttyio.echo(cmd, level="debug")
+        res = os.system(cmd)
     return res
 
 def main():
@@ -48,26 +51,36 @@ def main():
     # sync from cyclops to falcon as "backups"
     # sync from cyclops to thumbdrive if mounted as "jam"
     # sync ~jam/projects/ to /srv/backups on cyclops as "jam"
-    buf = buildbuf(opts)
+    cmds = []
     if opts.mode is None:
-        print "specify --mode!"
+        ttyio.echo("specify --mode!", level="error")
         return -1
     elif opts.mode == "thumbdrive":
         if os.path.isdir(opts.thumbdrive) and os.access(opts.thumbdrive, os.W_OK):
              buf.append("/srv/backups/ %s" % (opts.thumbdrive))
         else:
-            print "thumbdrive not mounted"
+            ttyio.echo("thumbdrive not mounted or mounted read-only", level="error")
             return -1
     elif opts.mode == "projects":
-        buf.append("~jam/projects /srv/backups/")
+        cmds.append("~jam/projects /srv/backups/")
     elif opts.mode == "falcon":
-        buf.append("backups@falcon:/srv/backups/falcon /srv/backups/")
+        cmds.append("backups@falcon:/srv/backups/falcon /srv/backups/")
     elif opts.mode == "cyclops":
-        buf.append("/srv/backups/cyclops backups@falcon:/srv/backups/")
+        cmds.append("/srv/backups/cyclops backups@falcon:/srv/backups/")
     elif opts.mode == "vhosts":
-        buf.append("backups@falcon:/srv/www/vhosts /srv/backups/falcon/")
-    res = run(buf)
-    return res
+        cmds.append("backups@falcon:/srv/www/vhosts /srv/backups/falcon/")
+    elif opts.mode == "home":
+        cmds.append("~jam/Pictures /srv/backups/")
+        cmds.append("~jam/.ssh/ /srv/backups/ssh/")
+    elif opts.mode == "repo":
+#        cmds.append("backups@falcon:/srv/repo /srv/backups/falcon/")
+        cmds.append("/srv/repo /srv/backups/cyclops/")
+    for c in cmds:
+        cmd = buildcmd(opts, c)
+        res = run(opts, cmd)
+        if res < 0:
+            return res
+    return
 
 if __name__ == "__main__":
     sys.exit(main())
