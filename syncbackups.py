@@ -14,7 +14,7 @@ def buildcmd(opts, args):
     cmd.append("--update --backup")
     cmd.append("--rsh=ssh --delete-after --links")
     cmd.append("--exclude '.~lock*' --exclude '*~' --exclude '443'")
-
+    cmd.append("--exclude .svn --exclude .git")
     if opts.verbose is True:
         cmd.append("--verbose")
     if opts.dryrun is True:
@@ -44,6 +44,7 @@ def main():
     parser.add_option("--debug", dest="debug", default=True, action="store_true", help="run %prog in debug mode")
     parser.add_option("--mode", dest="mode", default=None, action="store", help="specify mode for backups sync (thumbdrive, projects, or falcon)")
     parser.add_option("--thumbdrive", dest="thumbdrive", default=THUMBDRIVE, action="store", help="basedir of thumbdrive")
+    parser.add_option("--delete-after", dest="deleteafter", default=False, action="store_true", help="add --delete-after to rsync command line (default: %s)")
 
     (opts, args) = parser.parse_args()
 
@@ -62,6 +63,7 @@ def main():
             ttyio.echo("thumbdrive not mounted or mounted read-only", level="error")
             return -1
     elif opts.mode == "projects":
+        # rsync --verbose --recursive --copy-links --exclude .git --exclude .svn ~jam/projects /run/media/jam/6F6A-A171/
         cmds.append("~jam/projects /srv/backups/")
     elif opts.mode == "falcon":
         cmds.append("backups@falcon:/srv/backups/falcon /srv/backups/")
