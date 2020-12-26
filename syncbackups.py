@@ -58,7 +58,7 @@ def main():
         return -1
     elif opts.mode == "thumbdrive":
         if os.path.isdir(opts.thumbdrive) and os.access(opts.thumbdrive, os.W_OK):
-             buf.append("/srv/backups/ %s" % (opts.thumbdrive))
+             cmds.append("/srv/backups/ %s" % (opts.thumbdrive))
         else:
             ttyio.echo("thumbdrive not mounted or mounted read-only", level="error")
             return -1

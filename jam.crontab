@@ -1,5 +1,7 @@
-MAILTO=jam@zoidtechnologies.com
-00 04 * * * /usr/local/bin/syncbackups.py --mode=projects
-15 04 * * * /usr/local/bin/syncbackups.py --mode=vhosts
-30 04 * * * /usr/local/bin/syncbackups.py --mode=thumbdrive
-
+MAILTO=
+00 17 * * * /usr/local/bin/syncbackups --mode=projects
+30 17 * * * /usr/local/bin/syncbackups --mode=vhosts
+00 18 * * * /usr/local/bin/syncbackups --mode=cyclops
+30 18 * * * /usr/local/bin/syncbackups --mode=thumbdrive
+# */10 * * * * psql --host=localhost --port=15432 --command='refresh materialized view vulcan.link' zoidweb4
+*/30 * * * * /usr/local/bin/backupdatabase

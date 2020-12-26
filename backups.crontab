@@ -1,1 +1,4 @@
+MAILTO="jam@falcon.zoidtechnologies.com"
+PATH="/usr/pgsql-9.6/bin/:/usr/bin/:/bin/"
 15 00 * * * /home/backups/pg_backup_rotated.sh
+# * * * * * echo $PATH > ~/crontab_path.txt
