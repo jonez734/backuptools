@@ -2,6 +2,7 @@ MAILTO=
 00 17 * * * /usr/local/bin/syncbackups --mode=projects
 30 17 * * * /usr/local/bin/syncbackups --mode=vhosts
 00 18 * * * /usr/local/bin/syncbackups --mode=cyclops
-30 18 * * * /usr/local/bin/syncbackups --mode=thumbdrive
+# 30 18 * * * /usr/local/bin/syncbackups --mode=thumbdrive
 # */10 * * * * psql --host=localhost --port=15432 --command='refresh materialized view vulcan.link' zoidweb4
 */30 * * * * /usr/local/bin/backupdatabase
+15 * * * * /usr/local/bin/syncbackups --mode="cyclops-pgdump-thumbdrive"
