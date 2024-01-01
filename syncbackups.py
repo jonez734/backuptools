@@ -2,7 +2,7 @@
 
 import os, sys
 from optparse import OptionParser
-import ttyio3 as ttyio
+import ttyio4 as ttyio
 
 def buildcmd(opts, args):
     cmd = []
@@ -56,6 +56,13 @@ def main():
     if opts.mode is None:
         ttyio.echo("specify --mode!", level="error")
         return -1
+    elif opts.mode == "cyclops-pgdump-thumbdrive":
+        ttyio.echo("syncing *cyclops*.pgdump to thumbdrive")
+        cmds.append("/srv/backups/cyclops/pgdumps/*.pgdump %s/backups/cyclops/pgdumps/" % (opts.thumbdrive))
+    elif opts.mode == "falcon-pgdump-thumbdrive":
+        ttyio.echo("syncing *falcon*.pgdump to thumbdrive")
+        cmds.append("/srv/backups/falcon/pgdumps/*.pgdump %s/backups/falcon/pgdumps/" % (opts.thumbdrive))
+
     elif opts.mode == "thumbdrive":
         if os.path.isdir(opts.thumbdrive) and os.access(opts.thumbdrive, os.W_OK):
              cmds.append("/srv/backups/ %s" % (opts.thumbdrive))
