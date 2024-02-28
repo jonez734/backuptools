@@ -30,6 +30,7 @@ def buildcmd(opts, args):
     cmd.append("--recursive")
     cmd.append("--human-readable")
     cmd.append("--chmod=Dg=rwxs,Fgu=rw,Fo=r")
+    cmd.append("--copy-links")
 #    cmd.append("--group")
     cmd.append("--update --backup")
     cmd.append("--rsh=ssh") #  --delete-after --links")
@@ -92,9 +93,9 @@ def main():
         for host in ("falcon", "merlin"): #, "copper"):
             cmds.append(f"{host}:/srv/www/vhosts /srv/backups/{host}/")
     elif args.mode == "home":
-        cmds.append("~jam/Pictures /srv/backups/")
-        cmds.append("~jam/.ssh/ /srv/backups/ssh/")
-        cmds.append("~jam/.gnupg/ /srv/backups/gnupg/")
+        cmds.append("/home/jam/Pictures /srv/backups/")
+        cmds.append("/home/jam/.ssh/ /srv/backups/ssh/")
+        cmds.append("/home/jam/.gnupg/ /srv/backups/gnupg/")
     elif args.mode == "repo":
 #        cmds.append("backups@falcon:/srv/repo /srv/backups/falcon/")
         cmds.append("/srv/repo /srv/backups/")
