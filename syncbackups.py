@@ -1,6 +1,5 @@
-#!/usr/bin/env python
+import os, sys
 
-import os, sys, argparse
 from argparse import ArgumentParser
 
 from bbsengine6 import io
@@ -12,15 +11,16 @@ def access(args, op, **kw):
     return True
 
 def buildargs(args=None):
-    parser = ArgumentParser(usage="usage: %prog [options]")
-    parser.add_argument("--verbose", dest="verbose", default=True, action="store_true", help="run %prog in verbose mode")
-    parser.add_argument("--dry-run", dest="dryrun", default=False, action="store_true", help="run %prog in dry-run mode")
-#    parser.add_argument("--no-dry-run", dest="dryrun", default=False, action="store_false", help="run %prog in no dry-run mode")
-    parser.add_argument("--progress", dest="progress", default=sys.stdout.isatty(), action="store_true", help="show file transfer progress (default: %s)" % (sys.stdout.isatty()))
-    parser.add_argument("--debug", dest="debug", default=True, action="store_true", help="run %prog in debug mode")
+    isatty = True
+    parser = ArgumentParser(usage="usage: syncbackups [options]")
+    parser.add_argument("--verbose", dest="verbose", default=True, action="store_true", help="run  in verbose mode")
+    parser.add_argument("--dry-run", dest="dryrun", default=False, action="store_true", help="run  in dry-run mode")
+    parser.add_argument("--no-dry-run", dest="dryrun", default=False, action="store_false", help="run  in no dry-run mode")
+    parser.add_argument("--progress", dest="progress", default=True, action="store_true", help=f"show file transfer progress (default: {isatty})")
+    parser.add_argument("--debug", dest="debug", default=True, action="store_true", help="run  in debug mode")
     parser.add_argument("--mode", dest="mode", default=None, action="store", help="specify mode for backups sync (thumbdrive, projects, or falcon)")
     parser.add_argument("--thumbdrivebasedir", dest="thumbdrivebasedir", default=THUMBDRIVE, action="store", help="basedir of thumbdrive")
-    parser.add_argument("--delete-after", dest="deleteafter", default=False, action="store_true", help="add --delete-after to rsync command line (default: %s)")
+    parser.add_argument("--delete-after", dest="deleteafter", default=False, action="store_true", help="add --delete-after to rsync command line")
 
     return parser
 
@@ -57,7 +57,6 @@ def run(args, cmd):
     return res
 
 def main():
-
     parser = buildargs()
     args = parser.parse_args()
 
@@ -92,6 +91,9 @@ def main():
     elif args.mode == "vhosts":
         for host in ("falcon", "merlin"): #, "copper"):
             cmds.append(f"{host}:/srv/www/vhosts /srv/backups/{host}/")
+    elif args.mode == "database":
+        for host in ("merlin",):
+            cmds.append(f"{host}:/srv/backups/{host}/ /srv/backups/{host}/")
     elif args.mode == "home":
         cmds.append("/home/jam/Pictures /srv/backups/")
         cmds.append("/home/jam/.ssh/ /srv/backups/ssh/")
