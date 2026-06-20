@@ -1,0 +1,9 @@
+*~ 
+.~lock*
+*.pyc
+__pycache__
+*.pyo
+.git/
+.svn/
+*.egg-info/
+dist/

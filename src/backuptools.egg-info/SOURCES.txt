@@ -1,0 +1,10 @@
+pyproject.toml
+backuptools/__init__.py
+backuptools/_version.py
+backuptools/rsync-excludes.txt
+backuptools.egg-info/PKG-INFO
+backuptools.egg-info/SOURCES.txt
+backuptools.egg-info/dependency_links.txt
+backuptools.egg-info/entry_points.txt
+backuptools.egg-info/requires.txt
+backuptools.egg-info/top_level.txt

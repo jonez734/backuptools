@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: backuptools
+Version: 0.0.1.dev202606201040
+Summary: A set of Python scripts to make backups
+Author-email: "zoidtechnologies.com" <backuptools@projects.zoidtechnologies.com>
+License-Expression: GPL-2.0-or-later
+Project-URL: Homepage, http://projects.zoidtechnologies.com/backuptools/
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Operating System :: POSIX
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: <3.13,>=3.9
+Requires-Dist: bbsengine6
+Provides-Extra: dev

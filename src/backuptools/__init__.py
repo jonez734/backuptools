@@ -8,10 +8,22 @@ from argparse import ArgumentParser
 from bbsengine6 import io
 
 
-DEFAULT_EXCLUDES = "/home/opencode/data/work/backuptools/rsync-excludes.txt"
+def _get_default_excludes() -> str:
+    return os.path.join(os.path.dirname(__file__), "rsync-excludes.txt")
+
+
+DEFAULT_EXCLUDES = _get_default_excludes()
 DEFAULT_STAGING = "/srv/backups/"
 DEFAULT_BACKUPDEVICE = "/run/media/jam/BEA6-BBCE/"
 SOURCE_BASE = "/home/opencode/data/work"
+
+
+def init(args, **kwargs) -> bool:
+    return True
+
+
+def access(args, op, **kwargs) -> bool:
+    return True
 
 
 def check_file_readable(path: str) -> bool:
@@ -110,7 +122,7 @@ def validate_backupdevice(backupdevice: str, check_mount: bool = True) -> bool:
     return True
 
 
-def buildargs():
+def buildargs(args=None, **kwargs):
     parser = ArgumentParser(usage="usage: backup.py [options] project [project ...]")
     parser.add_argument("projects", nargs="+", help="project names to backup")
     parser.add_argument(
@@ -144,12 +156,18 @@ def buildargs():
         action="store_true",
         help="skip mount point check for backup device (for testing)",
     )
+    parser.add_argument(
+        "--stage-only",
+        action="store_true",
+        help="only copy to staging, skip backup device sync",
+    )
     return parser
 
 
-def main():
-    parser = buildargs()
-    args = parser.parse_args()
+def main(args=None, **kwargs):
+    if args is None:
+        parser = buildargs()
+        args = parser.parse_args()
 
     if not validate_excludes(args.excludes):
         return 1
@@ -179,6 +197,10 @@ def main():
             io.echo(f"rsync to staging failed for {project}", level="error")
             return 1
 
+    if args.stage_only:
+        io.echo("stage-only mode: skipping backup device sync")
+        return 0
+
     if not validate_backupdevice(args.backupdevice, not args.no_mount_check):
         return 1
 
@@ -193,7 +215,3 @@ def main():
 
     io.echo("backup complete")
     return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())

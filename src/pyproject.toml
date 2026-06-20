@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "backuptools"
+dynamic = ["version"]
+description = "A set of Python scripts to make backups"
+requires-python = ">=3.9,<3.13"
+license = "GPL-2.0-or-later"
+authors = [
+    { name = "zoidtechnologies.com", email = "backuptools@projects.zoidtechnologies.com" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "bbsengine6",
+]
+
+[project.scripts]
+backup = "backuptools:main"
+
+[project.optional-dependencies]
+dev = []
+
+[project.urls]
+Homepage = "http://projects.zoidtechnologies.com/backuptools/"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["backuptools*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "backuptools._version.__version__" }
+
+[tool.setuptools.package-data]
+backuptools = ["rsync-excludes.txt"]
