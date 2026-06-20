@@ -154,8 +154,7 @@ class TestBuildRsyncCmd:
         assert "--chmod=Dg=rwxs,Fgu=rw,Fo=r" in cmd
         assert "--update" in cmd
         assert "--backup" in cmd
-        assert "--exclude-from" in cmd
-        assert "/path/to/excludes.txt" in cmd
+        assert "--exclude-from=/path/to/excludes.txt" in cmd
         assert "--mkpath" in cmd
 
     def test_dry_run_flag(self):
@@ -217,7 +216,11 @@ class TestRunRsync:
         mock_result.returncode = 0
         mock_run.return_value = mock_result
 
-        result = lib.run_rsync(["rsync", "src/", "dest/"], "src/", "dest/")
+        mock_args = MagicMock()
+        mock_args.verbose = False
+        mock_args.debug = False
+
+        result = lib.run_rsync(mock_args, ["rsync", "src/", "dest/"], "src/", "dest/")
         assert result == 0
         mock_run.assert_called_once()
 
@@ -228,12 +231,20 @@ class TestRunRsync:
         mock_result.stderr = "error message"
         mock_run.return_value = mock_result
 
-        result = lib.run_rsync(["rsync", "src/", "dest/"], "src/", "dest/")
+        mock_args = MagicMock()
+        mock_args.verbose = False
+        mock_args.debug = False
+
+        result = lib.run_rsync(mock_args, ["rsync", "src/", "dest/"], "src/", "dest/")
         assert result == 1
 
     @patch("backuptools.lib.subprocess.run")
     def test_exception(self, mock_run):
         mock_run.side_effect = Exception("rsync exception")
 
-        result = lib.run_rsync(["rsync", "src/", "dest/"], "src/", "dest/")
+        mock_args = MagicMock()
+        mock_args.verbose = False
+        mock_args.debug = False
+
+        result = lib.run_rsync(mock_args, ["rsync", "src/", "dest/"], "src/", "dest/")
         assert result == -1

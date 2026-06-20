@@ -4,10 +4,11 @@ import sys
 from argparse import ArgumentParser
 
 from bbsengine6 import io, module
+from bbsengine6.common import safe_path
 
 
 def _get_default_excludes() -> str:
-    return os.path.join(os.path.dirname(__file__), "rsync-excludes.txt")
+    return safe_path(os.path.dirname(__file__), "rsync-excludes.txt")
 
 
 DEFAULT_EXCLUDES = _get_default_excludes()
@@ -108,31 +109,40 @@ def build_rsync_cmd(
         "--chmod=Dg=rwxs,Fgu=rw,Fo=r",
         "--update",
         "--backup",
-        "--exclude-from",
-        excludes_file,
+        f"--exclude-from={excludes_file}",
         "--mkpath",
     ]
     if dry_run:
         cmd.append("--dry-run")
-    if verbose and sys.stdout.isatty():
+    if verbose:
         cmd.append("--progress")
+        cmd.append("--verbose")
     return cmd
 
 
-def run_rsync(cmd: list, source: str, dest: str) -> int:
+def run_rsync(args, cmd: list, source: str, dest: str) -> int:
     full_cmd = cmd + [source, dest]
+    if getattr(args, "debug", False):
+        io.echo(f"run_rsync.100: {full_cmd=}", level="debug")
     try:
-        result = subprocess.run(full_cmd, capture_output=True, text=True)
-        if result.returncode != 0:
-            io.echo(f"rsync failed: {result.stderr}", level="error")
-        return result.returncode
+        verbose = getattr(args, "verbose", False)
+        if verbose:
+            sys.stdout.flush()
+            sys.stderr.flush()
+            proc = subprocess.Popen(full_cmd, stdout=1, stderr=2)
+            return proc.wait()
+        else:
+            result = subprocess.run(full_cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                io.echo(f"rsync failed: {result.stderr}", level="error")
+            return result.returncode
     except Exception as e:
         io.echo_traceback(f"rsync exception: {e}")
         return -1
 
 
 def validate_project(project: str) -> bool:
-    project_path = os.path.join(SOURCE_BASE, project)
+    project_path = safe_path(SOURCE_BASE, project)
     if not os.path.isdir(project_path):
         io.echo(f"project not found: {project_path}", level="error")
         return False
@@ -150,7 +160,7 @@ def validate_excludes(excludes_file: str) -> bool:
 
 
 def prepare_staging(staging_base: str, project: str) -> str:
-    staging_path = os.path.join(staging_base, "work", project)
+    staging_path = safe_path(staging_base, "work", project)
     if not ensure_dir_writable(staging_path):
         io.echo(f"staging not writable: {staging_path}", level="error")
         return None
