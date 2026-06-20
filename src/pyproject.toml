@@ -25,7 +25,7 @@ dependencies = [
 ]
 
 [project.scripts]
-backup = "backuptools:main"
+backup = "backuptools.__main__:main"
 
 [project.optional-dependencies]
 dev = []
