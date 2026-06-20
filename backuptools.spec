@@ -118,3 +118,26 @@ module.run(args, "backuptools")
 ## Dependencies
 - bbsengine6
 - rsync (system binary)
+
+## Testing
+
+```bash
+cd src
+python3.12 -m pytest tests/
+
+# Run unit tests only
+python3.12 -m pytest tests/ -m unit
+```
+
+### Test Markers
+- `unit` - Unit tests (registered in pyproject.toml)
+
+## pyproject.toml
+
+Key configuration:
+```toml
+[tool.pytest.ini_options]
+markers = [
+    "unit: Unit tests",
+]
+```

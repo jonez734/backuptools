@@ -42,3 +42,8 @@ version = { attr = "backuptools._version.__version__" }
 
 [tool.setuptools.package-data]
 backuptools = ["rsync-excludes.txt"]
+
+[tool.pytest.ini_options]
+markers = [
+    "unit: Unit tests",
+]

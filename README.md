@@ -55,9 +55,12 @@ Only syncs staging to backup device. Useful when staging already exists.
 # Run without installing
 PYTHONPATH=/home/opencode/data/work/backuptools/src python -m backuptools empyre
 
-# Run tests
+# Run tests (requires Python 3.12)
 cd backuptools/src
-python -m pytest tests/
+python3.12 -m pytest tests/
+
+# Run unit tests only
+python3.12 -m pytest tests/ -m unit
 ```
 
 ## See Also
