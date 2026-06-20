@@ -43,5 +43,5 @@ sign:
 
 release: clean version build rename-sdist sign
 
-sdist:
-	$(PYTHON) -m build --sdist --outdir $(OUTDIR)
+sdist: version
+	VERSION=$(VERSION) $(PYTHON) -m build --sdist --outdir $(OUTDIR)
