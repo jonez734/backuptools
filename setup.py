@@ -12,8 +12,8 @@ setup(
     url=f"http://projects.zoidtechnologies.com/{projectname}/",
     author="zoidtechnologies.com",
     author_email=f"{projectname}@projects.zoidtechnologies.com",
-    scripts=["backupdatabase", "syncbackups"],
-    py_modules=["backupdatabase", "syncbackups"],
+    scripts=["syncbackups"],
+    py_modules=["syncbackups"],
     requires=["bbsengine6"],
     license="GPLv2",
 )

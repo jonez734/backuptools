@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "backuptools"
+version = "0.0.1"
+description = "A set of Python scripts to make backups"
+requires-python = ">=3.9"
+license = {text = "GPLv2"}
+authors = [
+    {name = "zoidtechnologies.com", email = "backuptools@projects.zoidtechnologies.com"},
+]
+dependencies = [
+    "bbsengine6",
+]
+
+[project.scripts]
+backup = "backup:main"
+syncbackups = "syncbackups:main"
+
+[project.optional-dependencies]
+dev = []
+
+[tool.setuptools]
+py-modules = ["backup", "syncbackups"]
+
+[tool.setuptools.packages.find]
+where = ["."]
