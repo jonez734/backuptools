@@ -32,6 +32,8 @@ backup empyre --thumb-only
 ```
 Only syncs staging to backup device. Useful when staging already exists.
 
+Note: The rsync from staging to thumbdrive syncs the entire `work/` directory, not just the specified project(s).
+
 ## Options
 
 | Option | Description |
