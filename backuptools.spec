@@ -6,18 +6,23 @@ backuptools - A set of Python scripts to make backups using rsync. Conforms to b
 ## Project Structure
 ```
 backuptools/
-├── bin/
-│   └── backup                    # bash script wrapper
+├── Makefile                        # Build, deploy, prod targets
+├── databasebackup.service          # systemd unit (source copy)
+├── databasebackup.timer            # systemd timer (source copy)
+├── pg_backup_rotated.sh            # PostgreSQL rotated backup script
+├── pg_backup.config                # PostgreSQL backup configuration
 ├── src/
 │   ├── backuptools/
-│   │   ├── __init__.py           # Package entry - delegates to lib.runmodule()
-│   │   ├── __main__.py           # CLI entry - parses args, calls lib.runmodule()
-│   │   ├── lib.py                # Constants, helpers, buildargs(), runmodule()
-│   │   ├── main.py               # Main module logic
-│   │   ├── _version.py           # Version info
-│   │   └── rsync-excludes.txt    # rsync exclude patterns (package data)
-│   └── pyproject.toml            # Package config
-└── backuptools.spec              # This file
+│   │   ├── __init__.py             # Package entry - delegates to lib.runmodule()
+│   │   ├── __main__.py             # CLI entry - parses args, calls lib.runmodule()
+│   │   ├── lib.py                  # Constants, helpers, buildargs(), runmodule()
+│   │   ├── main.py                 # Main module logic
+│   │   ├── _version.py             # Version info
+│   │   ├── rsync-excludes.txt      # rsync exclude patterns (package data)
+│   │   ├── databasebackup.service  # systemd unit (package data)
+│   │   └── databasebackup.timer    # systemd timer (package data)
+│   └── pyproject.toml              # Package config
+└── backuptools.spec                # This file
 ```
 
 ## bbsengine6 Module ABI
@@ -131,6 +136,38 @@ module.run(args, "backuptools")
 ## Dependencies
 - bbsengine6
 - rsync (system binary)
+- systemd (for timer-based scheduling)
+
+## Deployment
+
+### Systemd Units
+
+`databasebackup.service` runs `pg_backup_rotated.sh` as the `backups` user after PostgreSQL starts. `databasebackup.timer` triggers the service 5 minutes after boot, then every hour.
+
+Both files are bundled as package data in the wheel and installed by `make prod`.
+
+### Makefile Targets
+
+```bash
+sudo make prod        # Install files to system paths
+sudo make prod-enable # daemon-reload + enable timer
+```
+
+`prod` target steps:
+1. Create `backups` system user (`useradd -r`) if missing
+2. Add calling user to `backups` group (`usermod -aG backups $(whoami)`)
+3. Create `/etc/backups` and `/srv/backups/database` (mode 0750, owned by backups)
+4. Install `pg_backup.config` (0640), `pg_backup_rotated.sh` (0750), `syncbackups.py` (0750)
+5. Install `databasebackup.service` (0640) and `databasebackup.timer` (0640) to `/etc/systemd/system/`
+6. Run `restorecon` on SELinux systems
+
+### Permissions
+
+All deployed files use restricted permissions:
+- Directories: 0750 (owner+group, no world)
+- Config files: 0640 (owner+group read, no world)
+- Executables: 0750 (owner+group rwx, no world)
+- systemd units: 0640 (owner+group read, no world)
 
 ## Testing
 

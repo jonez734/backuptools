@@ -80,6 +80,37 @@ python3.12 -m pytest tests/
 python3.12 -m pytest tests/ -m unit
 ```
 
+## Deployment
+
+### Systemd Units
+
+`databasebackup.service` and `databasebackup.timer` are bundled as package data in the wheel. The timer triggers the service 5 minutes after boot and then every hour.
+
+### Makefile Targets
+
+```bash
+# Install all files to system paths (requires root)
+sudo make prod
+
+# Enable and start the databasebackup timer
+sudo make prod-enable
+```
+
+The `prod` target:
+- Creates the `backups` system user if it doesn't exist
+- Adds the calling user to the `backups` group
+- Installs files with restricted permissions (group-readable, no world access)
+- Creates `/etc/backups` and `/srv/backups/database` directories
+- Runs `restorecon` on SELinux systems
+
+### Wheel Install
+
+The `.service` and `.timer` files are included in the wheel as package data. After `pip install`, they can be found at:
+```
+<site-packages>/backuptools/databasebackup.service
+<site-packages>/backuptools/databasebackup.timer
+```
+
 ## See Also
 
 - `backuptools.spec` - Detailed specification
