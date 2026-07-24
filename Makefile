@@ -20,6 +20,7 @@ prod:
 	install -m 0755 syncbackups.py /usr/local/bin/syncbackups.py
 	install -m 0644 databasebackup.service /etc/systemd/system/databasebackup.service
 	install -m 0644 databasebackup.timer /etc/systemd/system/databasebackup.timer
+	@command -v restorecon >/dev/null 2>&1 && sudo restorecon -R /usr/local/sbin/ /etc/systemd/system/ || true
 
 prod-enable:
 	systemctl daemon-reload
