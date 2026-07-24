@@ -25,64 +25,84 @@ def main(args=None, **kwargs):
         return 1
 
     projects = [p.rstrip("/") for p in args.projects]
+    is_database = any(lib.DATABASE_RE.match(p) for p in projects)
 
-    if not args.thumb_only:
-        for project in projects:
-            if not lib.validate_project(project):
-                return 1
+    if is_database:
+        if not lib.validate_database_source(args.database_source):
+            return 1
     else:
-        for project in projects:
-            if not lib.validate_project(project):
-                io.echo(
-                    f"{{labelcolor}}project not found: {{valuecolor}}{project}{{labelcolor}} (required for thumb-only mode)",
-                    level="error",
-                )
-                return 1
+        if not args.thumb_only:
+            for project in projects:
+                if not lib.validate_project(project):
+                    return 1
+        else:
+            for project in projects:
+                if not lib.validate_project(project):
+                    io.echo(
+                        f"{{labelcolor}}project not found: {{valuecolor}}{project}{{labelcolor}} (required for thumb-only mode)",
+                        level="error",
+                    )
+                    return 1
 
     io.echo(f"{{labelcolor}}staging:{{valuecolor}} {args.staging}")
     io.echo(f"{{labelcolor}}backup device:{{valuecolor}} {args.backupdevice}{{/all}}")
 
     rsync_cmd = lib.build_rsync_cmd(args.excludes, args.dry_run, args.verbose)
 
-    if not args.thumb_only:
-        for project in projects:
-            io.echo(f"{{labelcolor}}backing up:{{valuecolor}} {project}{{/all}}")
+    if is_database:
+        if not lib.validate_backupdevice(args.backupdevice, not args.no_mount_check):
+            return 1
 
-            staging_project = lib.prepare_staging(args.staging, project)
-            if staging_project is None:
-                return 1
+        db_source = args.database_source
+        backup_work = safe_path(args.backupdevice)
 
-            source_path = safe_path(lib.SOURCE_BASE, project)
-            staging_work = safe_path(args.staging, "work")
+        io.echo(f"{{labelcolor}}backing up database:{{valuecolor}} {db_source} {{labelcolor}}->{{valuecolor}} {backup_work}/{{/all}}")
+        if args.verbose:
+            io.echo(f"{{labelcolor}}rsync cmd:{{valuecolor}} {' '.join(rsync_cmd + [db_source, backup_work + '/'])}{{/all}}")
+        res = lib.run_rsync(args, rsync_cmd, db_source, backup_work + "/")
+        if res != 0:
+            io.echo("rsync to backup device failed", level="error")
+            return 1
+    else:
+        if not args.thumb_only:
+            for project in projects:
+                io.echo(f"{{labelcolor}}backing up:{{valuecolor}} {project}{{/all}}")
 
-            io.echo(f"{{labelcolor}}rsync to staging:{{valuecolor}} {source_path} {{labelcolor}}->{{valuecolor}} {staging_work}/{{/all}}")
-            if args.verbose:
-                io.echo(f"{{labelcolor}}rsync cmd:{{valuecolor}} {' '.join(rsync_cmd + [source_path, staging_work + '/'])}{{/all}}")
-            res = lib.run_rsync(args, rsync_cmd, source_path, staging_work + "/")
-            if res != 0:
-                io.echo(f"rsync to staging failed for {project}", level="error")
-                return 1
+                staging_project = lib.prepare_staging(args.staging, project)
+                if staging_project is None:
+                    return 1
 
-    if args.stage_only:
-        io.echo("stage-only mode: skipping backup device sync")
-        return 0
+                source_path = safe_path(lib.SOURCE_BASE, project)
+                staging_work = safe_path(args.staging, "work")
 
-    if not lib.validate_backupdevice(args.backupdevice, not args.no_mount_check):
-        return 1
+                io.echo(f"{{labelcolor}}rsync to staging:{{valuecolor}} {source_path} {{labelcolor}}->{{valuecolor}} {staging_work}/{{/all}}")
+                if args.verbose:
+                    io.echo(f"{{labelcolor}}rsync cmd:{{valuecolor}} {' '.join(rsync_cmd + [source_path, staging_work + '/'])}{{/all}}")
+                res = lib.run_rsync(args, rsync_cmd, source_path, staging_work + "/")
+                if res != 0:
+                    io.echo(f"rsync to staging failed for {project}", level="error")
+                    return 1
 
-    staging_work = safe_path(args.staging, "work")
-    backup_work = safe_path(args.backupdevice)
+        if args.stage_only:
+            io.echo("stage-only mode: skipping backup device sync")
+            return 0
 
-    if args.thumb_only:
-        io.echo("thumb-only mode: syncing staging to backup device")
+        if not lib.validate_backupdevice(args.backupdevice, not args.no_mount_check):
+            return 1
 
-    io.echo(f"{{labelcolor}}rsync to backup:{{valuecolor}} {staging_work} {{labelcolor}}->{{valuecolor}} {backup_work}/{{/all}}")
-    if args.verbose:
-        io.echo(f"{{labelcolor}}rsync cmd:{{valuecolor}} {' '.join(rsync_cmd + [staging_work, backup_work + '/'])}{{/all}}")
-    res = lib.run_rsync(args, rsync_cmd, staging_work, backup_work + "/")
-    if res != 0:
-        io.echo("rsync to backup device failed", level="error")
-        return 1
+        staging_work = safe_path(args.staging, "work")
+        backup_work = safe_path(args.backupdevice)
+
+        if args.thumb_only:
+            io.echo("thumb-only mode: syncing staging to backup device")
+
+        io.echo(f"{{labelcolor}}rsync to backup:{{valuecolor}} {staging_work} {{labelcolor}}->{{valuecolor}} {backup_work}/{{/all}}")
+        if args.verbose:
+            io.echo(f"{{labelcolor}}rsync cmd:{{valuecolor}} {' '.join(rsync_cmd + [staging_work, backup_work + '/'])}{{/all}}")
+        res = lib.run_rsync(args, rsync_cmd, staging_work, backup_work + "/")
+        if res != 0:
+            io.echo("rsync to backup device failed", level="error")
+            return 1
 
     io.echo("backup complete", level="ok")
     return 0

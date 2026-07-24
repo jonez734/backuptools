@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import sys
 from argparse import ArgumentParser
@@ -14,6 +15,8 @@ def _get_default_excludes() -> str:
 DEFAULT_EXCLUDES = _get_default_excludes()
 DEFAULT_STAGING = "/srv/backups/"
 DEFAULT_BACKUPDEVICE = "/run/media/jam/BEA6-BBCE/"
+DEFAULT_DATABASE_SOURCE = "/srv/backups/minotaur/"
+DATABASE_RE = re.compile(r"^(database|minotaur)$")
 SOURCE_BASE = "/home/opencode/data/work"
 
 PACKAGENAME = "backuptools"
@@ -67,6 +70,11 @@ def buildargs(args=None, **kwargs):
         "--thumb-only",
         action="store_true",
         help="only sync staging to backup device, skip source to staging",
+    )
+    parser.add_argument(
+        "--database-source",
+        default=DEFAULT_DATABASE_SOURCE,
+        help="source path for database backups (default: /srv/backups/minotaur/)",
     )
     return parser
 
@@ -172,5 +180,15 @@ def validate_backupdevice(backupdevice: str, check_mount: bool = True) -> bool:
         io.echo(
             f"backup device not mounted or not writable: {backupdevice}", level="error"
         )
+        return False
+    return True
+
+
+def validate_database_source(source: str) -> bool:
+    if not os.path.isdir(source):
+        io.echo(f"database source not found: {source}", level="error")
+        return False
+    if not os.access(source, os.R_OK):
+        io.echo(f"database source not readable: {source}", level="error")
         return False
     return True

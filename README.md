@@ -34,6 +34,20 @@ Only syncs staging to backup device. Useful when staging already exists.
 
 Note: The rsync from staging to thumbdrive syncs the entire `work/` directory, not just the specified project(s).
 
+### Database Backup
+```bash
+backup database
+backup minotaur
+```
+Syncs database dumps from `/srv/backups/minotaur/` directly to the backup device. Skips the staging step since the pg_dumps are already staged locally by the databasebackup timer. Both `database` and `minotaur` are aliases for the same source.
+
+```bash
+backup database --dry-run
+backup database --database-source /srv/backups/minotaur/
+```
+
+Note: `--stage-only` has no effect in database mode (staging is always skipped).
+
 ## Options
 
 | Option | Description |
@@ -46,6 +60,7 @@ Note: The rsync from staging to thumbdrive syncs the entire `work/` directory, n
 | `--no-mount-check` | Skip mount check (for testing) |
 | `--stage-only` | Only copy to staging |
 | `--thumb-only` | Only sync staging to backup device |
+| `--database-source PATH` | Source path for database backups (default: /srv/backups/minotaur/) |
 
 ## Environment
 
