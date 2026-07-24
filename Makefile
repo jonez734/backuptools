@@ -16,7 +16,7 @@ prod:
 	install -d /etc/backups
 	install -d /srv/backups/database
 	id backups >/dev/null 2>&1 || useradd -r -s /sbin/nologin backups
-	usermod -aG backups jam
+	usermod -aG backups $(shell whoami)
 	install -d -m 0750 -o backups -g backups /etc/backups
 	install -d -m 0750 -o backups -g backups /srv/backups/database
 	install -m 0640 -o backups -g backups pg_backup.config /etc/backups/pg_backup.config
