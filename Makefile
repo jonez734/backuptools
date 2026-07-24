@@ -1,5 +1,8 @@
 all:
 
+deploy:
+	pip install -e src/
+
 prod:
 	scp pg_backup.config pg_backup_rotated.sh backups@falcon:
 	scp syncbackups.py /usr/local/bin/
