@@ -13,13 +13,13 @@ deploy-www:
 	@echo "deploy-www: not yet implemented"
 
 prod:
-	mkdir -p /etc/backups
-	mkdir -p /srv/backups/database
-	rsync -av pg_backup.config /etc/backups/pg_backup.config
-	rsync -av pg_backup_rotated.sh /usr/local/sbin/pg_backup_rotated.sh
-	rsync -av syncbackups.py /usr/local/bin/syncbackups.py
-	rsync -av databasebackup.service /etc/systemd/system/databasebackup.service
-	rsync -av databasebackup.timer /etc/systemd/system/databasebackup.timer
+	install -d /etc/backups
+	install -d /srv/backups/database
+	install -m 0644 pg_backup.config /etc/backups/pg_backup.config
+	install -m 0755 pg_backup_rotated.sh /usr/local/sbin/pg_backup_rotated.sh
+	install -m 0755 syncbackups.py /usr/local/bin/syncbackups.py
+	install -m 0644 databasebackup.service /etc/systemd/system/databasebackup.service
+	install -m 0644 databasebackup.timer /etc/systemd/system/databasebackup.timer
 
 prod-enable:
 	systemctl daemon-reload
