@@ -41,7 +41,7 @@ include = ["backuptools*"]
 version = { attr = "backuptools._version.__version__" }
 
 [tool.setuptools.package-data]
-backuptools = ["rsync-excludes.txt"]
+backuptools = ["rsync-excludes.txt", "pg_backup.config", "pg_backup_rotated.sh"]
 
 [tool.pytest.ini_options]
 markers = [

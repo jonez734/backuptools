@@ -1,11 +1,21 @@
+PROJECT = backuptools
+
+.PHONY: all deploy deploy-www deploy-tui prod clean
+
 all:
 
-deploy:
-	pip install -e src/
+deploy: deploy-tui deploy-www
+
+deploy-tui:
+	python -m build --outdir dist/
+
+deploy-www:
+	@echo "deploy-www: not yet implemented"
 
 prod:
-	scp pg_backup.config pg_backup_rotated.sh backups@falcon:
-	scp syncbackups.py /usr/local/bin/
-	scp backupdatabase /usr/local/bin/
+	rsync -av pg_backup.config /etc/backups/pg_backup.config
+	rsync -av pg_backup_rotated.sh /usr/local/sbin/pg_backup_rotated.sh
+	rsync -av syncbackups.py /usr/local/bin/syncbackups.py
+
 clean:
 	-rm *~

@@ -67,7 +67,7 @@ backup <project> [project ...] [options]
 - `--no-mount-check` - Skip mount point check (for testing)
 - `--stage-only` - Only copy to staging, skip backup device sync
 - `--thumb-only` - Only sync staging to backup device, skip source to staging
-- `--database-source PATH` - Source path for database backups (default: /srv/backups/minotaur)
+- `--database-source PATH` - Source path for database backups (default: /srv/backups/database)
 
 ### Environment
 - `BACKUPDEVICE` - Override default backup device path
@@ -85,13 +85,13 @@ backup <project> [project ...] [options]
 
 ### Database backup (`backup database` or `backup minotaur`)
 1. Validate excludes file is readable
-2. Validate database source exists: /srv/backups/minotaur
+2. Validate database source exists: /srv/backups/database
 3. Validate backup device mounted and writable
-4. rsync /srv/backups/minotaur → <backupdevice>/
+4. rsync /srv/backups/database → <backupdevice>/
 
 No staging step — the pg_dumps are already staged locally by the databasebackup timer.
 
-Aliases `database` and `minotaur` are matched by `DATABASE_RE` (re.compile `r"^(database|minotaur)$"`). Both rsync the same default source (`/srv/backups/minotaur`). Override with `--database-source`.
+Aliases `database` and `minotaur` are matched by `DATABASE_RE` (re.compile `r"^(database|minotaur)$"`). Both rsync the same default source (`/srv/backups/database`). Override with `--database-source`.
 
 ### Stage-only mode (--stage-only)
 - Skip steps 3 and 4 (exit after step 2)
@@ -124,7 +124,7 @@ module.run(args, "backuptools")
 - `DEFAULT_EXCLUDES` - Path to rsync-excludes.txt
 - `DEFAULT_STAGING = "/srv/backups/"`
 - `DEFAULT_BACKUPDEVICE = "/run/media/jam/BEA6-BBCE/"`
-- `DEFAULT_DATABASE_SOURCE = "/srv/backups/minotaur"`
+- `DEFAULT_DATABASE_SOURCE = "/srv/backups/database"`
 - `DATABASE_RE = re.compile(r"^(database|minotaur)$")` - Aliases for database backup
 - `SOURCE_BASE = "/home/opencode/data/work"`
 

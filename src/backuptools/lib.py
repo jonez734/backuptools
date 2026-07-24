@@ -15,7 +15,7 @@ def _get_default_excludes() -> str:
 DEFAULT_EXCLUDES = _get_default_excludes()
 DEFAULT_STAGING = "/srv/backups/"
 DEFAULT_BACKUPDEVICE = "/run/media/jam/BEA6-BBCE/"
-DEFAULT_DATABASE_SOURCE = "/srv/backups/minotaur"
+DEFAULT_DATABASE_SOURCE = "/srv/backups/database"
 DATABASE_RE = re.compile(r"^(database|minotaur)$")
 SOURCE_BASE = "/home/opencode/data/work"
 
@@ -74,7 +74,7 @@ def buildargs(args=None, **kwargs):
     parser.add_argument(
         "--database-source",
         default=DEFAULT_DATABASE_SOURCE,
-        help="source path for database backups (default: /srv/backups/minotaur)",
+        help="source path for database backups (default: /srv/backups/database)",
     )
     return parser
 

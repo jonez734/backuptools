@@ -6,7 +6,7 @@
  
 while [ $# -gt 0 ]; do
         case $1 in
-                -c)
+                -c|--config)
                         CONFIG_FILE_PATH="$2"
                         shift 2
                         ;;
@@ -16,10 +16,9 @@ while [ $# -gt 0 ]; do
                         ;;
         esac
 done
- 
+
 if [ -z $CONFIG_FILE_PATH ] ; then
-        SCRIPTPATH=$(cd ${0%/*} && pwd -P)
-        CONFIG_FILE_PATH="${SCRIPTPATH}/pg_backup.config"
+        CONFIG_FILE_PATH="/etc/backups/pg_backup.config"
 fi
  
 if [ ! -r ${CONFIG_FILE_PATH} ] ; then
