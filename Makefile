@@ -14,6 +14,7 @@ deploy-www:
 
 prod:
 	mkdir -p /etc/backups
+	mkdir -p /srv/backups/database
 	rsync -av pg_backup.config /etc/backups/pg_backup.config
 	rsync -av pg_backup_rotated.sh /usr/local/sbin/pg_backup_rotated.sh
 	rsync -av syncbackups.py /usr/local/bin/syncbackups.py
