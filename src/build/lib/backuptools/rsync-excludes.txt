@@ -1,0 +1,13 @@
+*~
+.~lock*
+*.pyc
+__pycache__
+*.pyo
+.git/
+.svn/
+*.egg-info/
+dist/
+.ruff_cache/
+.sass-cache/
+
+

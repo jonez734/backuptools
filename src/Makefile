@@ -22,7 +22,7 @@ version:
 	@echo 'githash = "'`git log -1 --format='%H' | cut -c 1-16`'"' >> $(PROJECT)/_version.py
 	@echo 'datestamp = "$(VERSION)"' >> $(PROJECT)/_version.py
 
-build:
+build: version
 	VERSION=$(VERSION) $(PYTHON) -m build --outdir $(OUTDIR)
 
 rename-sdist:

@@ -3,6 +3,6 @@ Description=Database Backups
 After=postgresql.service
 
 [Service]
-User=jam
+User=backups
 Type=oneshot
 ExecStart=/usr/local/sbin/pg_backup_rotated.sh -c /etc/backups/pg_backup.config

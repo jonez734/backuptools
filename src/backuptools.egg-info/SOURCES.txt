@@ -1,6 +1,12 @@
+MANIFEST.in
+README.md
+backuptools.spec
 pyproject.toml
 backuptools/__init__.py
+backuptools/__main__.py
 backuptools/_version.py
+backuptools/lib.py
+backuptools/main.py
 backuptools/rsync-excludes.txt
 backuptools.egg-info/PKG-INFO
 backuptools.egg-info/SOURCES.txt
@@ -8,3 +14,6 @@ backuptools.egg-info/dependency_links.txt
 backuptools.egg-info/entry_points.txt
 backuptools.egg-info/requires.txt
 backuptools.egg-info/top_level.txt
+tests/test_integration.py
+tests/test_lib.py
+tests/test_main.py

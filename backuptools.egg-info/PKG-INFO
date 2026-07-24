@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: backuptools
+Version: 202607241500
+Summary: a set of Python scripts to make backups
+Home-page: http://projects.zoidtechnologies.com/backuptools/
+Author: zoidtechnologies.com
+Author-email: backuptools@projects.zoidtechnologies.com
+License: GPLv2
+Requires: bbsengine6
+Dynamic: author
+Dynamic: author-email
+Dynamic: home-page
+Dynamic: license
+Dynamic: requires
+Dynamic: summary

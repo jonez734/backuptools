@@ -1,0 +1,8 @@
+README.md
+setup.py
+syncbackups
+syncbackups.py
+backuptools.egg-info/PKG-INFO
+backuptools.egg-info/SOURCES.txt
+backuptools.egg-info/dependency_links.txt
+backuptools.egg-info/top_level.txt

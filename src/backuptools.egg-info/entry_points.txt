@@ -1,2 +1,2 @@
 [console_scripts]
-backup = backuptools:main
+backup = backuptools.__main__:main

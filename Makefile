@@ -15,7 +15,8 @@ deploy-www:
 prod:
 	install -d /etc/backups
 	install -d /srv/backups/database
-	chown -R jam:jam /srv/backups/database
+	id backups >/dev/null 2>&1 || useradd -r -s /sbin/nologin backups
+	chown -R backups:backups /srv/backups/database
 	install -m 0644 pg_backup.config /etc/backups/pg_backup.config
 	install -m 0755 pg_backup_rotated.sh /usr/local/sbin/pg_backup_rotated.sh
 	install -m 0755 syncbackups.py /usr/local/bin/syncbackups.py
