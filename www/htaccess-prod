@@ -1,0 +1,17 @@
+#
+# htaccess-prod - Production rewrite rules for BACKUPTOOLS
+#
+
+RewriteEngine On
+RewriteBase /backuptools/
+
+RewriteRule ^favicon\.ico$ - [last]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.+)$ /engine/router.php?uri=$1 [last,qsappend]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([a-zA-Z0-9_/-]+)$ /engine/router.php?uri=$1 [last,qsappend]
+
+RewriteRule ^$ index.php [last]

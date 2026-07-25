@@ -1,0 +1,69 @@
+{extends file="page.tmpl"}
+{block name="title"}backuptools{/block}
+{block name="head" append}
+<link rel="stylesheet" type="text/css" href="{$smarty.const.SKINURL}css/pageheader.css" media="screen" />
+{/block}
+{block name="content"}
+
+<div class="blurb vstretch">
+<div class="header"><h1>backuptools</h1></div>
+<div class="body">
+<p>Backup utilities built on bbsengine6. rsync-based project and PostgreSQL database backups with staging and external device support.</p>
+{if $currentmember.flags.AUTHENTICATED}
+<p><a href="https://github.com/jonez734/backuptools">View source on GitHub</a></p>
+{/if}
+</div>
+</div>
+
+<div class="blurb vstretch">
+<div class="header"><h1>quick start</h1></div>
+<div class="body">
+<p>Install with <code>pip install -e backuptools/src/</code>, then back up a project:</p>
+<p><code>backup empyre</code></p>
+<p>Back up multiple projects at once:</p>
+<p><code>backup empyre teos asimov</code></p>
+</div>
+</div>
+
+<div class="blurb vstretch">
+<div class="header"><h1>backup modes</h1></div>
+<div class="body">
+<ul class="nobullets">
+{foreach $data.modes as $mode}
+<li>
+<strong>{$mode.name}</strong>
+<p><code>{$mode.command}</code></p>
+<p>{$mode.description}</p>
+</li>
+{/foreach}
+</ul>
+</div>
+</div>
+
+<div class="blurb vstretch">
+<div class="header"><h1>options</h1></div>
+<div class="body">
+<ul class="nobullets">
+{foreach $data.options as $option}
+<li><code>{$option.flag}</code> &mdash; {$option.description}</li>
+{/foreach}
+</ul>
+</div>
+</div>
+
+<div class="blurb vstretch">
+<div class="header"><h1>systemd integration</h1></div>
+<div class="body">
+<ul class="nobullets">
+{foreach $data.systemd as $unit}
+<li>
+<strong>{$unit.name}</strong>
+<p>{$unit.description}</p>
+</li>
+{/foreach}
+</ul>
+<p>Deploy with <code>sudo make prod</code> and enable with <code>sudo make prod-enable</code>.</p>
+</div>
+</div>
+
+{/block}
