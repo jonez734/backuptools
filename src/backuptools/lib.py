@@ -7,6 +7,8 @@ from argparse import ArgumentParser
 from bbsengine6 import io, module
 from bbsengine6.common import safe_path
 
+from backuptools._version import __version__
+
 
 def _get_default_excludes() -> str:
     return safe_path(os.path.dirname(__file__), "rsync-excludes.txt")
@@ -28,6 +30,7 @@ def runmodule(args, modulename, **kwargs):
 
 def buildargs(args=None, **kwargs):
     parser = ArgumentParser(usage="usage: backup.py [options] project [project ...]")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("--debug", action="store_true", help="debug mode")
     parser.add_argument("projects", nargs="+", help="project names to backup")
     parser.add_argument(
@@ -115,6 +118,7 @@ def build_rsync_cmd(
         "--recursive",
         "--human-readable",
         "--chmod=Dg=rwxs,Fgu=rw,Fo=r",
+        "--xattrs",
         "--update",
         "--backup",
         f"--exclude-from={excludes_file}",

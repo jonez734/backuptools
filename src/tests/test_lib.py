@@ -152,6 +152,7 @@ class TestBuildRsyncCmd:
         assert "--recursive" in cmd
         assert "--human-readable" in cmd
         assert "--chmod=Dg=rwxs,Fgu=rw,Fo=r" in cmd
+        assert "--xattrs" in cmd
         assert "--update" in cmd
         assert "--backup" in cmd
         assert "--exclude-from=/path/to/excludes.txt" in cmd

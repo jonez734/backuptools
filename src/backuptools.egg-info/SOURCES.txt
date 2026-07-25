@@ -1,10 +1,11 @@
 MANIFEST.in
 README.md
-backuptools.spec
 pyproject.toml
 backuptools/__init__.py
 backuptools/__main__.py
 backuptools/_version.py
+backuptools/databasebackup.service
+backuptools/databasebackup.timer
 backuptools/lib.py
 backuptools/main.py
 backuptools/rsync-excludes.txt

@@ -1,13 +1,16 @@
 PROJECT = backuptools
 
-.PHONY: all deploy deploy-www deploy-tui prod prod-enable clean
+.PHONY: all deploy deploy-www deploy-tui version prod prod-enable clean
 
 all:
 
 deploy: deploy-tui deploy-www
 
-deploy-tui:
-	python -m build --outdir dist/
+version:
+	$(MAKE) -C src version
+
+deploy-tui: version
+	$(MAKE) -C src build
 
 deploy-www:
 	@echo "deploy-www: not yet implemented"
