@@ -1,4 +1,17 @@
 PROJECT = backuptools
+STAGE = /srv/www/vhosts/zoidtechnologies.com/html/$(PROJECT)/
+SKINDIR = $(STAGE)skin/
+HOST = merlin
+
+SCSSLOADPATH = --load-path /home/opencode/data/work/zoid6/shared/skin/scss/ \
+	--load-path /home/opencode/data/work/bbsengine6/skin/scss/ \
+	--load-path /home/opencode/data/work/backuptools/www/skin/scss/
+SCSS = sass $(SCSSLOADPATH) --sourcemap=none --stop-on-error --trace --style expanded
+
+RSYNC = rsync --chmod=Dg=rwxs,Fgu=rw,Fo=r --no-times --verbose \
+	--archive --update --backup --recursive \
+	--human-readable --checksum --rsh=ssh \
+	--mkpath --exclude='*~'
 
 .PHONY: all deploy deploy-www deploy-tui version prod prod-enable clean
 
@@ -13,7 +26,8 @@ deploy-tui: version
 	$(MAKE) -C src build
 
 deploy-www:
-	@echo "deploy-www: not yet implemented"
+	$(MAKE) -C www prod
+	$(RSYNC) $(STAGE) $(HOST):$(STAGE)
 
 prod:
 	install -d /etc/backups
