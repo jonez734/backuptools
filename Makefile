@@ -1,14 +1,14 @@
-PROJECT = backuptools
-STAGE = /srv/www/vhosts/zoidtechnologies.com/html/$(PROJECT)/
-SKINDIR = $(STAGE)skin/
-HOST = merlin
+export PROJECT = backuptools
+export STAGE = /srv/www/vhosts/zoidtechnologies.com/html/$(PROJECT)/
+export SKINDIR = $(STAGE)skin/
+export HOST = merlin
 
-SCSSLOADPATH = --load-path /home/opencode/data/work/zoid6/shared/skin/scss/ \
+export SCSSLOADPATH = --load-path /home/opencode/data/work/zoid6/shared/skin/scss/ \
 	--load-path /home/opencode/data/work/bbsengine6/skin/scss/ \
 	--load-path /home/opencode/data/work/backuptools/www/skin/scss/
-SCSS = sass $(SCSSLOADPATH) --sourcemap=none --stop-on-error --trace --style expanded
+export SCSS = sass $(SCSSLOADPATH) --sourcemap=none --stop-on-error --trace --style expanded
 
-RSYNC = rsync --chmod=Dg=rwxs,Fgu=rw,Fo=r --no-times --verbose \
+export RSYNC = rsync --chmod=Dg=rwxs,Fgu=rw,Fo=r --no-times --verbose \
 	--archive --update --backup --recursive \
 	--human-readable --checksum --rsh=ssh \
 	--mkpath --exclude='*~'
