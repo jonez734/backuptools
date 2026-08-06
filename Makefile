@@ -13,10 +13,10 @@ export SCSSLOADPATH = --load-path /home/opencode/data/work/zoid6/shared/skin/scs
 	--load-path /home/opencode/data/work/backuptools/www/skin/scss/
 export SCSS = sass $(SCSSLOADPATH) --sourcemap=none --stop-on-error --trace --style expanded
 
-export RSYNC = rsync --chmod=Dg=rwxs,Fgu=rw,Fo=r --no-times --verbose \
+export RSYNC = rsync --chmod=Dg=rwxs,Fgu=rw,Fo=r --verbose \
 	--archive --update --backup --recursive \
 	--human-readable --checksum --rsh=ssh \
-	--mkpath --exclude='*~'
+	--times --no-group --mkpath --exclude='*~'
 
 .PHONY: all deploy deploy-www deploy-tui version prod prod-enable clean
 .PHONY: install-venv uninstall-venv
