@@ -3,6 +3,11 @@ export STAGE = /srv/www/vhosts/zoidtechnologies.com/html/$(PROJECT)/
 export SKINDIR = $(STAGE)skin/
 export HOST = merlin
 
+PYTHON ?= python3
+VENV_DIR ?= $(if $(VIRTUAL_ENV),$(VIRTUAL_ENV),.venv)
+VENV_OWNER ?= $(USER)
+VENV_GROUP ?= $(USER)
+
 export SCSSLOADPATH = --load-path /home/opencode/data/work/zoid6/shared/skin/scss/ \
 	--load-path /home/opencode/data/work/bbsengine6/skin/scss/ \
 	--load-path /home/opencode/data/work/backuptools/www/skin/scss/
@@ -14,6 +19,7 @@ export RSYNC = rsync --chmod=Dg=rwxs,Fgu=rw,Fo=r --no-times --verbose \
 	--mkpath --exclude='*~'
 
 .PHONY: all deploy deploy-www deploy-tui version prod prod-enable clean
+.PHONY: install-venv uninstall-venv
 
 all:
 
@@ -46,6 +52,18 @@ prod:
 prod-enable:
 	systemctl daemon-reload
 	systemctl enable --now databasebackup.timer
+
+install-venv:
+	@command -v sudo >/dev/null 2>&1 || { echo "Error: sudo required"; exit 1; }
+	@sudo -u $(VENV_OWNER) test -d "$(VENV_DIR)" || sudo -u $(VENV_OWNER) $(PYTHON) -m venv "$(VENV_DIR)"
+	sudo -u $(VENV_OWNER) $(VENV_DIR)/bin/pip install --upgrade pip
+	sudo -u $(VENV_OWNER) $(VENV_DIR)/bin/pip install --quiet build setuptools wheel
+	@echo "Ensured venv at $(VENV_DIR) (owner: $(VENV_OWNER):$(VENV_GROUP))"
+
+uninstall-venv:
+	@echo "WARNING: removing $(VENV_DIR) (this may delete your active venv)"
+	-rm -rf $(VENV_DIR)
+	@echo "Removed $(VENV_DIR)"
 
 clean:
 	-rm *~
