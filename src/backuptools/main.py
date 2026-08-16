@@ -4,7 +4,7 @@ from bbsengine6.common import safe_path
 from . import lib
 
 
-def buildargs(args=None, **kwargs):
+def buildargs(args, **kwargs):
     return lib.buildargs(args, **kwargs)
 
 
@@ -16,11 +16,7 @@ def access(args, op, **kwargs) -> bool:
     return True
 
 
-def main(args=None, **kwargs):
-    if args is None:
-        parser = buildargs()
-        args = parser.parse_args()
-
+def main(args, **kwargs):
     if not lib.validate_excludes(args.excludes):
         return 1
 

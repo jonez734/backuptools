@@ -28,7 +28,7 @@ def runmodule(args, modulename, **kwargs):
     return module.runmodule(args, f"{PACKAGENAME}.{modulename}", **kwargs)
 
 
-def buildargs(args=None, **kwargs):
+def buildargs(args, **kwargs):
     parser = ArgumentParser(usage="usage: backup.py [options] project [project ...]")
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("--debug", action="store_true", help="debug mode")

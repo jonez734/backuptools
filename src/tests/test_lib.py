@@ -33,66 +33,66 @@ class TestConstants:
 
 class TestBuildargs:
     def test_returns_argumentparser(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         assert parser is not None
 
     def test_has_debug_flag(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["--debug", "project1"])
         assert args.debug is True
 
     def test_has_projects_positional(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["project1", "project2"])
         assert args.projects == ["project1", "project2"]
 
     def test_has_staging_option(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["--staging", "/custom/staging", "project1"])
         assert args.staging == "/custom/staging"
 
     def test_default_staging(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["project1"])
         assert args.staging == "/srv/backups/"
 
     def test_has_backupdevice_option(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["--backupdevice", "/custom/device", "project1"])
         assert args.backupdevice == "/custom/device"
 
     def test_has_excludes_option(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["--excludes", "/custom/excludes.txt", "project1"])
         assert args.excludes == "/custom/excludes.txt"
 
     def test_has_dry_run_flag(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["--dry-run", "project1"])
         assert args.dry_run is True
 
     def test_has_verbose_flag(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["--verbose", "project1"])
         assert args.verbose is True
 
     def test_verbose_default_true(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["project1"])
         assert args.verbose is True
 
     def test_has_no_mount_check_flag(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["--no-mount-check", "project1"])
         assert args.no_mount_check is True
 
     def test_has_stage_only_flag(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["--stage-only", "project1"])
         assert args.stage_only is True
 
     def test_has_thumb_only_flag(self):
-        parser = lib.buildargs()
+        parser = lib.buildargs(None)
         args = parser.parse_args(["--thumb-only", "project1"])
         assert args.thumb_only is True
 

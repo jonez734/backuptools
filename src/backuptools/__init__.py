@@ -10,9 +10,9 @@ def access(args, op, **kwargs) -> bool:
     return True
 
 
-def buildargs(args=None, **kwargs):
+def buildargs(args, **kwargs):
     return None
 
 
-def main(args=None, **kwargs):
+def main(args, **kwargs):
     return lib.runmodule(args, "main", **kwargs)
