@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: backuptools
-Version: 0.0.1.dev202607241941
+Version: 0.0.1.dev202608152150
 Summary: A set of Python scripts to make backups
 Author-email: "zoidtechnologies.com" <backuptools@projects.zoidtechnologies.com>
 License-Expression: GPL-2.0-or-later
