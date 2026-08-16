@@ -5,7 +5,7 @@ from . import lib
 
 
 def main():
-    parser = lib.buildargs()
+    parser = lib.buildargs(None)
     args = parser.parse_args()
     lib.runmodule(args, "main", argv=sys.argv[1:])
 

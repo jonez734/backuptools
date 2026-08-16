@@ -1,10 +1,13 @@
 import os
+import re
 import subprocess
 import sys
 from argparse import ArgumentParser
 
 from bbsengine6 import io, module
 from bbsengine6.common import safe_path
+
+from backuptools._version import __version__
 
 
 def _get_default_excludes() -> str:
@@ -14,6 +17,8 @@ def _get_default_excludes() -> str:
 DEFAULT_EXCLUDES = _get_default_excludes()
 DEFAULT_STAGING = "/srv/backups/"
 DEFAULT_BACKUPDEVICE = "/run/media/jam/BEA6-BBCE/"
+DEFAULT_DATABASE_SOURCE = "/srv/backups/database"
+DATABASE_RE = re.compile(r"^(database|minotaur)$")
 SOURCE_BASE = "/home/opencode/data/work"
 
 PACKAGENAME = "backuptools"
@@ -23,8 +28,9 @@ def runmodule(args, modulename, **kwargs):
     return module.runmodule(args, f"{PACKAGENAME}.{modulename}", **kwargs)
 
 
-def buildargs(args=None, **kwargs):
+def buildargs(args, **kwargs):
     parser = ArgumentParser(usage="usage: backup.py [options] project [project ...]")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("--debug", action="store_true", help="debug mode")
     parser.add_argument("projects", nargs="+", help="project names to backup")
     parser.add_argument(
@@ -68,6 +74,11 @@ def buildargs(args=None, **kwargs):
         action="store_true",
         help="only sync staging to backup device, skip source to staging",
     )
+    parser.add_argument(
+        "--database-source",
+        default=DEFAULT_DATABASE_SOURCE,
+        help="source path for database backups (default: /srv/backups/database)",
+    )
     return parser
 
 
@@ -107,6 +118,7 @@ def build_rsync_cmd(
         "--recursive",
         "--human-readable",
         "--chmod=Dg=rwxs,Fgu=rw,Fo=r",
+        "--xattrs",
         "--update",
         "--backup",
         f"--exclude-from={excludes_file}",
@@ -172,5 +184,15 @@ def validate_backupdevice(backupdevice: str, check_mount: bool = True) -> bool:
         io.echo(
             f"backup device not mounted or not writable: {backupdevice}", level="error"
         )
+        return False
+    return True
+
+
+def validate_database_source(source: str) -> bool:
+    if not os.path.isdir(source):
+        io.echo(f"database source not found: {source}", level="error")
+        return False
+    if not os.access(source, os.R_OK):
+        io.echo(f"database source not readable: {source}", level="error")
         return False
     return True
